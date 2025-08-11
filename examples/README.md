@@ -16,6 +16,7 @@ This template uses a layered design for separation of concerns, testability, and
   /repository/       # Repository interfaces & infrastructure implementations
   /usecase/          # Application services/use cases (business orchestration)
 /migrations/         # Database migration scripts
+/pkg                 # Imprement interface like gin, kafka-go
 ```
 
 ---
