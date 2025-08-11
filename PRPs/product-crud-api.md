@@ -1,7 +1,7 @@
 # PRP: Product CRUD API with Go Clean Architecture
 
 **Purpose**  
-Implement a complete Product CRUD API using Go Clean Architecture principles with Gin framework, PostgreSQL, comprehensive validation, logging, tracing, and testing.
+Implement a complete Product CRUD (Create, Read, Update, Delete) API using Go Clean Architecture principles with PostgreSQL persistence, comprehensive validation, logging, tracing, and testing.
 
 ---
 
@@ -15,120 +15,141 @@ Implement a complete Product CRUD API using Go Clean Architecture principles wit
 ---
 
 ## Goal
-Build a production-ready Product CRUD API with Clean Architecture that provides:
-- Full CRUD operations (Create, Read, Update, Delete) for products
-- Pagination, sorting, and filtering for product listings
-- Request validation, structured logging, and distributed tracing
-- Database migrations and multi-environment support
+**Build a production-ready Product CRUD API** following Clean Architecture principles with:
+- RESTful endpoints for Product management (GET, POST, PUT, DELETE)
+- Pagination, sorting, and filtering capabilities
+- Input validation and error handling
+- Structured logging and distributed tracing
+- Database migrations and transaction management
 - Comprehensive unit and integration tests
 - Graceful shutdown and configuration management
 
 ---
 
 ## Why
-- **Business Value**: Core foundation for e-commerce/inventory systems requiring scalable product management
-- **Integration**: Clean Architecture enables easy testing, maintenance, and future feature additions  
-- **Problem Solved**: Provides maintainable, testable foundation for product data management with proper separation of concerns
+- **Business Value**: Provides foundation for e-commerce product catalog management with scalable architecture
+- **Integration**: Serves as template for other CRUD services in the system following established patterns  
+- **Problem Solved**: Eliminates boilerplate setup and provides best-practice implementation for Go microservices
 
 ---
 
 ## What
 - **User-visible behavior**: 
-  - `POST /products` - Create new product with validation
-  - `GET /products` - List products with pagination, filtering, sorting
-  - `GET /products/{id}` - Get single product by ID
-  - `PUT /products/{id}` - Update existing product with validation
-  - `DELETE /products/{id}` - Delete product by ID
-- **Technical requirements**: JSON API, PostgreSQL storage, request validation, structured logging, OpenTelemetry tracing
+  - `GET /api/v1/products` - List products with pagination, sorting, filtering
+  - `GET /api/v1/products/{id}` - Get single product by ID
+  - `POST /api/v1/products` - Create new product
+  - `PUT /api/v1/products/{id}` - Update existing product
+  - `DELETE /api/v1/products/{id}` - Delete product
+  - Structured JSON responses with consistent error handling
+  - Request/response logging with correlation IDs
+
+- **Technical requirements**: 
+  - Clean Architecture with strict layer boundaries
+  - PostgreSQL with connection pooling and transactions
+  - Input validation using struct tags
+  - OpenTelemetry distributed tracing
+  - Structured logging with contextual fields
+  - Database migrations for schema versioning
+  - Environment-based configuration
 
 ---
 
 ## Success Criteria
-- All CRUD endpoints respond correctly with proper HTTP status codes
-- Pagination works with `limit`, `offset`, `sort` query parameters
-- Validation errors return structured error responses
-- All requests are traced with OpenTelemetry
-- Structured logs include request context and performance metrics
-- Database migrations run successfully up and down
-- Unit tests achieve >80% coverage with mocked dependencies
-- Integration tests verify end-to-end functionality
-- Graceful shutdown handles SIGTERM/SIGINT properly
+- [ ] All CRUD endpoints respond correctly with proper HTTP status codes
+- [ ] Request validation rejects invalid input with descriptive errors
+- [ ] Database operations are transactional and handle concurrent access
+- [ ] All tests pass: unit tests >90% coverage, integration tests for database layer
+- [ ] No lint errors: `golangci-lint run` passes
+- [ ] Performance: API responds <100ms for single-record operations
+- [ ] Graceful shutdown completes within 30 seconds
+- [ ] All layers maintain Clean Architecture dependency rules
 
 ---
 
 ## All Needed Context
 
 **Documentation & References**
-- `url:` https://pkg.go.dev/github.com/gin-gonic/gin  
-  `why:` HTTP routing, middleware patterns, context handling
-- `url:` https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md  
-  `why:` PostgreSQL migration patterns and connection strings
-- `url:` https://signoz.io/blog/opentelemetry-gin/  
-  `why:` OpenTelemetry Gin instrumentation examples
+- `url:` https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html  
+  `why:` Core Clean Architecture principles and dependency rules
+- `url:` https://github.com/gin-gonic/gin  
+  `why:` HTTP routing, middleware, JSON binding patterns
+- `url:` https://pkg.go.dev/github.com/lib/pq  
+  `why:` PostgreSQL connection management, error handling, transactions
+- `url:` https://pkg.go.dev/github.com/golang-migrate/migrate/v4  
+  `why:` Database migration patterns and CLI usage
 - `url:` https://pkg.go.dev/github.com/go-playground/validator/v10  
-  `why:` Struct validation tags and patterns
-- `url:` https://github.com/sirupsen/logrus  
-  `why:` Structured logging with fields and context
-- `url:` https://github.com/stretchr/testify  
-  `why:` Assertions, mocks, and testing patterns
-- `url:` https://github.com/bxcodec/go-clean-arch  
-  `why:` Clean Architecture reference implementation
-- `url:` https://medium.com/@hatajoe/clean-architecture-in-go-4030f11ec1b1  
-  `why:` Go-specific Clean Architecture patterns
+  `why:` Struct validation tags and error handling
+- `url:` https://pkg.go.dev/github.com/sirupsen/logrus  
+  `why:` Structured logging with context fields
+- `url:` https://opentelemetry.io/docs/instrumentation/go/  
+  `why:` Distributed tracing and HTTP instrumentation
 
 **Current Codebase Tree**  
 ```
-/Users/sathabhronchangchuea/Desktop/Work/Freshket/backend-context-engineering-template/
-├── CLAUDE.md
-├── go.mod (with dependencies: gin, lib/pq, golang-migrate, validator, logrus, testify, otel)
-├── examples/README.md (Clean Architecture folder structure reference)
-└── PRPs/templates/prp_base.md
+/
+├── CLAUDE.md                    # Project guidance and commands
+├── go.mod                      # Dependencies already configured
+├── examples/
+│   └── README.md               # Clean Architecture structure guide
+└── PRPs/
+    └── templates/
+        └── prp_base.md         # PRP template
 ```
 
 **Desired Codebase Tree**  
 ```
-/Users/sathabhronchangchuea/Desktop/Work/Freshket/backend-context-engineering-template/
+/
 ├── cmd/
-│   └── main.go                              # Application entry point with DI setup
+│   └── main.go                 # Application entry point and composition root
 ├── config/
-│   └── config.go                           # Environment configuration loading
+│   ├── config.go               # Configuration struct and loading
+│   └── database.go             # Database connection configuration
 ├── internal/
 │   ├── domain/
-│   │   ├── product.go                      # Product entity with business rules
-│   │   └── errors.go                       # Domain-specific error definitions
+│   │   ├── product.go          # Product entity with business rules
+│   │   └── errors.go           # Domain-specific errors
 │   ├── usecase/
-│   │   ├── interfaces.go                   # UseCase and Repository interfaces
-│   │   └── product_usecase.go              # Product business logic orchestration
+│   │   ├── interfaces.go       # Repository and service interfaces
+│   │   ├── product_usecase.go  # Business logic orchestration
+│   │   └── product_usecase_test.go
 │   ├── repository/
-│   │   └── postgres/
-│   │       └── product_repository.go       # PostgreSQL implementation
+│   │   ├── postgres/
+│   │   │   ├── product_repo.go # PostgreSQL implementation
+│   │   │   └── product_repo_test.go
+│   │   └── interfaces.go       # Repository interfaces
 │   └── delivery/
 │       └── http/
-│           ├── dto/
-│           │   └── product_dto.go          # Request/Response DTOs
-│           ├── handler/
-│           │   ├── product_handler.go      # HTTP handlers
-│           │   └── response.go             # Standard response wrapper
+│           ├── handlers/
+│           │   ├── product_handler.go # HTTP request handlers
+│           │   └── product_handler_test.go
 │           ├── middleware/
-│           │   ├── logger.go              # Request logging middleware
-│           │   └── tracer.go              # OpenTelemetry middleware
-│           └── router.go                   # Route definitions
+│           │   ├── logging.go  # Request logging middleware
+│           │   └── tracing.go  # OpenTelemetry middleware
+│           ├── dto/
+│           │   └── product_dto.go # Request/response DTOs
+│           └── router.go       # Route definitions
 ├── migrations/
-│   ├── 000001_create_products.up.sql      # Create products table
-│   └── 000001_create_products.down.sql    # Drop products table
-├── .env.example                            # Environment template
-└── go.mod                                  # Dependencies already defined
+│   ├── 001_create_products_table.up.sql
+│   └── 001_create_products_table.down.sql
+├── pkg/
+│   ├── database/
+│   │   └── postgres.go         # Database connection utilities
+│   └── logger/
+│       └── logger.go           # Logging setup and configuration
+├── .env.example                # Environment variables template
+├── Dockerfile                  # Container configuration
+└── docker-compose.yml         # Development environment
 ```
 
 **Known Gotchas**
-- Clean Architecture: Inner layers (domain) cannot import outer layers (delivery/infrastructure)
-- All repositories must implement interfaces defined in usecase layer
-- Use context.Context for request-scoped data (logging, tracing)
-- Database transactions should be managed at UseCase level, not Repository level
-- JSON struct tags must be consistent with validation tags
-- OpenTelemetry middleware must be registered before route handlers
-- Environment variables need validation and defaults
-- Graceful shutdown requires proper signal handling and cleanup
+- All repositories must implement interfaces defined in `internal/repository/interfaces.go` to enable dependency injection and testing
+- Database transactions must be handled at the use case layer, not repository layer
+- All HTTP handlers must use `*gin.Context` and follow consistent error response format
+- Environment variables must be validated at startup to fail fast
+- PostgreSQL parameterized queries use `$1, $2` format, not `?` placeholders
+- OpenTelemetry middleware must be registered before other middleware to capture complete traces
+- Logrus structured logging requires WithFields() for proper context
+- Migration files require both .up.sql and .down.sql versions with timestamp prefixes
 
 ---
 
@@ -136,177 +157,145 @@ Build a production-ready Product CRUD API with Clean Architecture that provides:
 
 ### Data Models & Structure
 
-**Domain Layer Pattern** (from research):
-```go
-// Product entity with business rules and validation
-type Product struct {
-    ID          uint      `json:"id"`
-    Name        string    `json:"name" validate:"required,min=3,max=100"`
-    Description string    `json:"description" validate:"max=500"`
-    Price       float64   `json:"price" validate:"required,gt=0"`
-    SKU         string    `json:"sku" validate:"required,unique"`
-    Stock       int       `json:"stock" validate:"gte=0"`
-    CategoryID  uint      `json:"category_id" validate:"required"`
-    CreatedAt   time.Time `json:"created_at"`
-    UpdatedAt   time.Time `json:"updated_at"`
-}
-```
+**Domain Layer**: Pure business entities and rules
+- Product entity with validation methods
+- Domain-specific error types
+- Business rule enforcement
 
-**UseCase Layer Pattern** (from research):
-```go
-type ProductUseCase interface {
-    CreateProduct(ctx context.Context, req *CreateProductRequest) (*Product, error)
-    GetProduct(ctx context.Context, id uint) (*Product, error)
-    UpdateProduct(ctx context.Context, id uint, req *UpdateProductRequest) (*Product, error)
-    DeleteProduct(ctx context.Context, id uint) error
-    ListProducts(ctx context.Context, params ListProductsParams) (*ProductList, error)
-}
+**Use Case Layer**: Application business logic
+- Product use case with CRUD operations
+- Interface definitions for repositories
+- Input/output ports for data transfer
 
-type ProductRepository interface {
-    Create(ctx context.Context, product *Product) (*Product, error)
-    GetByID(ctx context.Context, id uint) (*Product, error)
-    Update(ctx context.Context, product *Product) error
-    Delete(ctx context.Context, id uint) error
-    List(ctx context.Context, params ListParams) ([]*Product, int64, error)
-}
-```
+**Repository Layer**: Data persistence abstraction  
+- Repository interfaces in domain-facing package
+- PostgreSQL implementation with connection pooling
+- Transaction management and error translation
 
-**Repository Layer Pattern** (from PostgreSQL research):
-```go
-func (r *productRepository) Create(ctx context.Context, product *Product) (*Product, error) {
-    query := `INSERT INTO products (name, description, price, sku, stock, category_id) 
-              VALUES ($1, $2, $3, $4, $5, $6) 
-              RETURNING id, created_at, updated_at`
-    
-    err := r.db.QueryRowContext(ctx, query, product.Name, product.Description, 
-        product.Price, product.SKU, product.Stock, product.CategoryID).
-        Scan(&product.ID, &product.CreatedAt, &product.UpdatedAt)
-    return product, err
-}
-```
-
-**Delivery Layer Pattern** (from Gin research):
-```go
-func (h *ProductHandler) CreateProduct(c *gin.Context) {
-    var req CreateProductRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
-        return
-    }
-    
-    product, err := h.productUC.CreateProduct(c.Request.Context(), &req)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-        return
-    }
-    
-    c.JSON(http.StatusCreated, SuccessResponse{Data: product})
-}
-```
+**Delivery Layer**: HTTP transport and presentation
+- Gin handlers for REST endpoints
+- Request/response DTOs with validation
+- Middleware for logging and tracing
 
 ### Task List
 
-**Task 1: Project Structure & Configuration**  
-CREATE project directory structure and configuration
-- `cmd/main.go` - Application entry point with DI
-- `config/config.go` - Environment config with validation
-- `.env.example` - Environment template
-
-**Task 2: Domain Layer Implementation**  
-CREATE `internal/domain/product.go` and `internal/domain/errors.go`
-- Product entity with validation tags
-- Domain-specific error types
-- Business rule validation methods
-
-**Task 3: Interface Definitions**  
-CREATE `internal/usecase/interfaces.go`  
-- ProductUseCase interface with all CRUD methods
-- ProductRepository interface for data persistence
-- Request/Response struct definitions
-
-**Task 4: UseCase Layer Implementation**  
-CREATE `internal/usecase/product_usecase.go`
-- Implement ProductUseCase interface
-- Business logic orchestration with error handling
-- Transaction management and validation
-
-**Task 5: Repository Layer Implementation**  
-CREATE `internal/repository/postgres/product_repository.go`
-- Implement ProductRepository interface
-- PostgreSQL queries with proper error handling  
-- Context-aware database operations
-
-**Task 6: Database Migrations**  
-CREATE migration files in `migrations/`
-- `000001_create_products.up.sql` with products table schema
-- `000001_create_products.down.sql` with table drop
-- Include indexes for performance
-
-**Task 7: HTTP Delivery Layer - DTOs**  
-CREATE `internal/delivery/http/dto/product_dto.go`
-- Request DTOs with validation tags
-- Response DTOs for API consistency
-- Pagination and filtering structs
-
-**Task 8: HTTP Delivery Layer - Handlers**  
-CREATE `internal/delivery/http/handler/product_handler.go` and `response.go`
-- CRUD endpoint handlers with Gin context
-- Request validation and error handling
-- Standard response format implementation
-
-**Task 9: Middleware Implementation**  
-CREATE middleware in `internal/delivery/http/middleware/`
-- `logger.go` - Structured logging with Logrus
-- `tracer.go` - OpenTelemetry instrumentation
-- Context propagation for request tracking
-
-**Task 10: HTTP Router Setup**  
-CREATE `internal/delivery/http/router.go`
-- Route definitions with proper HTTP methods
-- Middleware registration order
-- Route grouping and versioning
-
-**Task 11: Application Wiring**  
-MODIFY `cmd/main.go` to wire all components
-- Database connection and migration
-- Dependency injection setup
-- HTTP server with graceful shutdown
+**Task 1: Project Structure Setup**  
+CREATE `cmd/main.go`
+- Application entry point with dependency injection
+- Graceful shutdown handling
 - Configuration loading and validation
 
-**Task 12: Comprehensive Testing**  
-CREATE test files for each layer
-- `internal/domain/product_test.go` - Entity validation tests
-- `internal/usecase/product_usecase_test.go` - Business logic tests with mocks
-- `internal/delivery/http/handler/product_handler_test.go` - HTTP handler tests
-- Use testify for assertions and mocking
+CREATE `config/config.go`  
+- Environment variable mapping
+- Configuration validation
+- Database connection parameters
+
+**Task 2: Domain Layer Implementation**  
+CREATE `internal/domain/product.go`
+- Product entity with fields: ID, Name, Description, Price, SKU, CreatedAt, UpdatedAt
+- Validation methods for business rules
+- Domain-specific methods (e.g., IsActive, SetPrice)
+
+CREATE `internal/domain/errors.go`
+- Domain error types (ErrProductNotFound, ErrInvalidPrice, etc.)
+- Error wrapping utilities
+
+**Task 3: Repository Layer**  
+CREATE `internal/repository/interfaces.go`
+- ProductRepository interface with CRUD methods
+- Query parameters for filtering and pagination
+
+CREATE `internal/repository/postgres/product_repo.go`
+- PostgreSQL implementation of ProductRepository
+- Connection management and query execution
+- Error handling and transaction support
+
+**Task 4: Use Case Layer**  
+CREATE `internal/usecase/interfaces.go`
+- Repository interface definitions
+- External service interfaces
+
+CREATE `internal/usecase/product_usecase.go`
+- Business logic orchestration
+- Transaction boundary management
+- Error handling and logging
+
+**Task 5: Delivery Layer**  
+CREATE `internal/delivery/http/dto/product_dto.go`
+- Request/response structures
+- Validation tags and JSON mapping
+
+CREATE `internal/delivery/http/handlers/product_handler.go`
+- HTTP handlers for CRUD operations
+- Request binding and validation
+- Response formatting
+
+CREATE `internal/delivery/http/router.go`
+- Route registration and middleware setup
+- CORS and security headers
+
+**Task 6: Infrastructure Setup**  
+CREATE `migrations/001_create_products_table.up.sql`
+- Products table schema with indexes
+- Constraints and data types
+
+CREATE `pkg/database/postgres.go`
+- Database connection setup
+- Migration execution
+- Health check utilities
+
+CREATE `pkg/logger/logger.go`
+- Structured logging configuration
+- Context extraction utilities
+
+**Task 7: Configuration & Environment**  
+CREATE `.env.example`
+- Environment variables template
+- Development defaults
+
+CREATE `Dockerfile`
+- Multi-stage build for production
+- Security best practices
+
+**Task 8: Testing Implementation**  
+CREATE test files for each layer:
+- Domain unit tests
+- Use case tests with mocked repositories  
+- Repository integration tests with test database
+- Handler tests with HTTP test utilities
 
 ---
 
 ## Integration Points
 
 **DATABASE**  
-- PostgreSQL with connection pooling
-- Migration management with golang-migrate
-- Transaction support for complex operations
-- Proper indexes for query performance
+- PostgreSQL with connection pooling via pgxpool
+- Migration management using golang-migrate
+- Transaction isolation levels for consistency
+- Indexes on frequently queried columns (ID, SKU, CreatedAt)
 
 **CONFIG**  
-- Environment-based configuration with godotenv
-- Validation of required environment variables
-- Default values for development environment
-- Support for different environments (dev/staging/prod)
+- Environment-based configuration with validation
+- Graceful degradation for optional settings
+- Secret management for database credentials
 
 **ROUTES**  
-- RESTful endpoint design following HTTP standards
-- Proper HTTP status codes for different scenarios
-- Content-Type and Accept header handling
-- CORS support for frontend integration
+```
+GET    /api/v1/products           # List with pagination/filtering
+GET    /api/v1/products/:id       # Get by ID
+POST   /api/v1/products           # Create new
+PUT    /api/v1/products/:id       # Update existing  
+DELETE /api/v1/products/:id       # Delete by ID
+GET    /health                    # Health check endpoint
+```
 
-**OBSERVABILITY**
-- OpenTelemetry tracing with request correlation
-- Structured logging with contextual information
-- Health check endpoints for monitoring
-- Metrics collection for performance monitoring
+**MIDDLEWARE STACK**
+1. CORS headers
+2. Request ID generation
+3. OpenTelemetry tracing
+4. Structured logging
+5. Error recovery
+6. Rate limiting (future enhancement)
 
 ---
 
@@ -314,243 +303,95 @@ CREATE test files for each layer
 
 **Level 1: Syntax & Style**  
 ```bash
-go mod tidy
 go fmt ./...
 go vet ./...
-# Optional: golangci-lint run (if available)
+go mod tidy
+golangci-lint run
 ```
-Expected: No errors/warnings, dependencies resolved.
+Expected: No errors or warnings
 
-**Level 2: Build & Compilation**  
+**Level 2: Unit Tests**  
 ```bash
-go build -o bin/app cmd/main.go
+go test ./internal/domain/... -v
+go test ./internal/usecase/... -v  
+go test ./internal/delivery/... -v
 ```
-Expected: Clean compilation with executable created.
+Expected: All tests pass with >90% coverage
 
-**Level 3: Unit Tests**  
+**Level 3: Integration Tests**  
 ```bash
-go test ./... -v -race -count=1
-go test -cover ./...
+go test ./internal/repository/... -v
 ```
-Expected: All tests pass, >80% coverage achieved.
+Expected: Database integration tests pass
 
-**Level 4: Integration Tests**  
+**Level 4: API Tests**  
 ```bash
-# Start test database
-# Run migrations
-go test ./internal/delivery/http/handler -v -tags=integration
+go run cmd/main.go &
+# Manual API testing with curl/Postman
+curl -X GET http://localhost:8080/api/v1/products
+curl -X POST http://localhost:8080/api/v1/products -d '{"name":"Test Product","price":99.99}'
 ```
-Expected: End-to-end functionality verified.
-
-**Level 5: Manual API Testing**  
-```bash
-# Start application
-go run cmd/main.go
-
-# Test endpoints
-curl -X POST http://localhost:8080/products -d '{"name":"Test Product","price":99.99,"sku":"TEST001","stock":10,"category_id":1}' -H "Content-Type: application/json"
-curl http://localhost:8080/products
-curl http://localhost:8080/products/1
-```
-Expected: Proper JSON responses with correct status codes.
+Expected: All endpoints respond correctly
 
 ---
 
 ## Final Validation Checklist
-- [ ] All CRUD endpoints working with proper HTTP methods
-- [ ] Request validation returns structured error messages  
-- [ ] Pagination, sorting, filtering work on GET /products
 - [ ] All tests pass: `go test ./...`
-- [ ] No lint errors: `go vet ./...` and `golangci-lint run`
-- [ ] Database migrations run up and down successfully
-- [ ] Structured logs include request IDs and contextual information
-- [ ] OpenTelemetry traces are generated for all requests
-- [ ] Graceful shutdown works properly on SIGTERM/SIGINT
+- [ ] No lint errors: `golangci-lint run`
+- [ ] Database migrations apply and rollback correctly
+- [ ] API endpoints handle happy path and error cases
+- [ ] Request validation blocks invalid input
+- [ ] Logs are structured with correlation IDs
+- [ ] Traces appear in telemetry backend
+- [ ] Graceful shutdown completes cleanly
 - [ ] Configuration loads from environment variables
-- [ ] Clean Architecture boundaries maintained (no circular imports)
+- [ ] Docker build completes successfully
 
 ---
 
 ## Anti-Patterns to Avoid
-❌ Breaking Clean Architecture dependency rules (outer importing inner)  
-❌ Skipping request validation at HTTP boundary  
-❌ Using domain entities directly in HTTP responses  
-❌ Managing database transactions in repository layer  
-❌ Hardcoding configuration values instead of environment variables  
-❌ Ignoring context cancellation in long-running operations  
-❌ Missing error handling and logging for debugging  
-❌ Using panic/recover without proper logging  
-❌ Creating tight coupling between layers  
-❌ Missing indexes on frequently queried database columns
+❌ Breaking dependency rules (delivery layer importing use case interfaces)  
+❌ Database logic in handlers or use cases  
+❌ Hardcoded configuration values  
+❌ Missing transaction boundaries for data consistency  
+❌ Generic error messages without context  
+❌ Blocking operations without timeout contexts  
+❌ Missing input validation on DTOs  
+❌ SQL injection vulnerabilities  
+❌ Resource leaks (unclosed connections, goroutines)  
+❌ Logging sensitive data (passwords, tokens)
 
 ---
 
-## Context-Rich Implementation Examples
-
-**Gin Handler Pattern** (from research):
-```go
-func (h *ProductHandler) CreateProduct(c *gin.Context) {
-    // Extract request ID for logging
-    requestID := c.GetHeader("X-Request-ID")
-    if requestID == "" {
-        requestID = uuid.New().String()
-    }
-    
-    // Add to context for logging
-    ctx := context.WithValue(c.Request.Context(), "request_id", requestID)
-    
-    // Structured logging with context
-    logger := logrus.WithFields(logrus.Fields{
-        "request_id": requestID,
-        "method":     c.Request.Method,
-        "path":       c.Request.URL.Path,
-    })
-    
-    var req CreateProductRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        logger.WithError(err).Error("Invalid request payload")
-        c.JSON(http.StatusBadRequest, ErrorResponse{
-            Error: "Invalid request payload",
-            Details: getValidationErrors(err),
-        })
-        return
-    }
-    
-    product, err := h.productUC.CreateProduct(ctx, &req)
-    if err != nil {
-        logger.WithError(err).Error("Failed to create product")
-        c.JSON(getHTTPStatus(err), ErrorResponse{Error: err.Error()})
-        return
-    }
-    
-    logger.WithField("product_id", product.ID).Info("Product created successfully")
-    c.JSON(http.StatusCreated, SuccessResponse{Data: product})
-}
-```
-
-**OpenTelemetry Setup Pattern** (from research):
-```go
-// In main.go or middleware setup
-func setupTracing() {
-    r := gin.New()
-    r.Use(otelgin.Middleware("product-crud-api"))
-    
-    // Custom span attributes
-    r.Use(func(c *gin.Context) {
-        span := trace.SpanFromContext(c.Request.Context())
-        span.SetAttributes(
-            attribute.String("http.user_agent", c.GetHeader("User-Agent")),
-            attribute.String("request.id", c.GetHeader("X-Request-ID")),
-        )
-        c.Next()
-    })
-}
-```
-
-**Validation Pattern** (from research):
-```go
-type CreateProductRequest struct {
-    Name        string  `json:"name" validate:"required,min=3,max=100"`
-    Description string  `json:"description" validate:"max=500"`
-    Price       float64 `json:"price" validate:"required,gt=0"`
-    SKU         string  `json:"sku" validate:"required,alphanum,min=3,max=50"`
-    Stock       int     `json:"stock" validate:"gte=0"`
-    CategoryID  uint    `json:"category_id" validate:"required,gt=0"`
-}
-
-func getValidationErrors(err error) map[string]string {
-    errors := make(map[string]string)
-    if validationErrors, ok := err.(validator.ValidationErrors); ok {
-        for _, e := range validationErrors {
-            errors[e.Field()] = getValidationMessage(e)
-        }
-    }
-    return errors
-}
-```
-
-**Database Migration Pattern** (from research):
-```sql
--- 000001_create_products.up.sql
-BEGIN;
-
-CREATE TABLE IF NOT EXISTS products (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
-    sku VARCHAR(50) NOT NULL UNIQUE,
-    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-    category_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku);
-CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
-CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
-
-COMMIT;
-```
-
-**Testify Testing Pattern** (from research):
-```go
-func TestProductUseCase_CreateProduct(t *testing.T) {
-    tests := []struct {
-        name          string
-        request       *CreateProductRequest
-        mockSetup     func(*mocks.ProductRepository)
-        expectedError error
-    }{
-        {
-            name: "successful product creation",
-            request: &CreateProductRequest{
-                Name:       "Test Product",
-                Price:      99.99,
-                SKU:        "TEST001",
-                Stock:      10,
-                CategoryID: 1,
-            },
-            mockSetup: func(mockRepo *mocks.ProductRepository) {
-                mockRepo.On("Create", mock.Anything, mock.AnythingOfType("*domain.Product")).
-                    Return(&domain.Product{ID: 1, Name: "Test Product"}, nil)
-            },
-            expectedError: nil,
-        },
-    }
-
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            mockRepo := new(mocks.ProductRepository)
-            tt.mockSetup(mockRepo)
-            
-            uc := NewProductUseCase(mockRepo)
-            result, err := uc.CreateProduct(context.Background(), tt.request)
-            
-            if tt.expectedError != nil {
-                assert.Error(t, err)
-                assert.Equal(t, tt.expectedError, err)
-            } else {
-                assert.NoError(t, err)
-                assert.NotNil(t, result)
-            }
-            
-            mockRepo.AssertExpectations(t)
-        })
-    }
-}
-```
+## Performance Considerations
+- Connection pooling with appropriate limits
+- Database query optimization with EXPLAIN ANALYZE
+- Pagination to limit result set sizes
+- Proper database indexes on query columns
+- Context cancellation for request timeouts
+- Structured logging to avoid string concatenation overhead
 
 ---
 
-## Confidence Score: 9/10
+## Security Measures
+- Input validation on all endpoints
+- SQL injection prevention via parameterized queries
+- HTTPS enforcement in production
+- Sensitive data exclusion from logs
+- Database credential protection
+- CORS policy configuration
+- Request size limits
 
-This PRP provides comprehensive context for one-pass implementation success with:
-- ✅ Complete file structure and implementation patterns
-- ✅ Concrete code examples from extensive library research
-- ✅ Sequential task breakdown following Clean Architecture principles
-- ✅ Executable validation gates for each development stage
-- ✅ Rich context about gotchas, conventions, and best practices
-- ✅ Integration examples for all major dependencies (Gin, PostgreSQL, OpenTelemetry, etc.)
+---
 
-The high confidence score reflects thorough research and detailed implementation guidance that should enable successful development without additional context requirements.
+**PRP Confidence Score: 9/10**
+
+This PRP provides comprehensive context, specific implementation guidance, and executable validation steps. The success probability is high due to:
+- Well-defined architecture boundaries
+- Specific file structure and naming
+- Concrete code examples and patterns
+- Executable validation commands
+- Detailed gotchas and anti-patterns
+- External documentation references
+
+The only minor risk is the complexity of coordinating all layers correctly, but the step-by-step approach and validation loops mitigate this concern.
