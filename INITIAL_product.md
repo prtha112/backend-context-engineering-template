@@ -1,11 +1,6 @@
 ## FEATURE:
 
-Product CRUD (Create, Read, Update, Delete) with Go Clean Architecture.
-Layers: Domain (entities, rules), Use Case (business logic), Adapters (HTTP, repo), Infrastructure (DB, logging).
-Pagination, sorting, filtering.
-Validation, logging, tracing, graceful shutdown.
-Config via .env, migrations, multi-environment support.
-Unit & integration tests.
+Product CRUD (Create, Read, Update, Delete)
 
 ## EXAMPLES:
 
