@@ -10,15 +10,14 @@ The AI agent only gets the context you are appending to the PRP and training dat
 
 1. **Codebase Analysis**
     - Search for similar features/patterns
-        - Controllers/Handlers (HTTP/gRPC) that match the feature domain
+        - Controllers/Handlers (HTTP) that match the feature domain
         - Reusable middlewares, request/response DTOs, validation patterns
         - Error handling conventions (error wrapping, sentinel errors, status mapping)
-        - Config management (env, Viper, koanf, etc.)
+        - Config management (env don't use external library)
         - DI/Composition patterns (wire, fx, dig, manual)
-        - Persistence layer (sqlc/GORM/Ent/pgx), migrations (goose, migrate)
-        - Caching/Queue patterns (redis, nats/kafka)
-        - Logging/Tracing (zap, zerolog, slog), observability (otel)
-        - Test layout and helpers (testify, httptest, golden files, mockery)
+        - Persistence layer (sqlx + pq), migrations (migrate)
+        - Logging (zap)
+        - Test layout and helpers (testify)
     - Identify files to reference in PRP
         - List absolute paths (e.g., internal/http/handlers/user.go, pkg/db/repo/order_repo.go)
     - Conventions to follow
@@ -26,17 +25,16 @@ The AI agent only gets the context you are appending to the PRP and training dat
         - Lint rules (golangci-lint config), CI steps, Make targets
         - Error model & response schema (problem+json? custom envelope?)
     - Test patterns
-        - How unit/integration tests are structured
+        - How unit tests are structured
         - Mock strategy (interfaces + mockery? hand-written fakes?)
 
 2. **External Research**
    - Library/Stdlib docs (URLs with specific sections)
         - Go: net/http, context, errors, database/sql / sync, time
-        - Framework in use (detect from codebase): Gin/Chi/Echo/Fiber/grpc-go
-        - ORM/Query: sqlc/GORM/Ent/pgx
-        - Migrations: goose/golang-migrate
+        - Framework in use (detect from codebase): Gin
+        - ORM/Query: sqlx + pq
         - Config: Viper/koanf
-        - Logging: zap/slog
+        - Logging: zap
         - DI: wire/fx/dig (or document manual wiring)
     - Implementation examples
         - Minimal handlers, middleware, transactional repo patterns
