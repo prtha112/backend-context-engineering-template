@@ -33,7 +33,6 @@ The AI agent only gets the context you are appending to the PRP and training dat
         - Go: net/http, context, errors, database/sql / sync, time
         - Framework in use (detect from codebase): Gin
         - ORM/Query: sqlx + pq
-        - Config: Viper/koanf
         - Logging: zap
         - DI: wire/fx/dig (or document manual wiring)
     - Implementation examples
