@@ -1,6 +1,17 @@
 ## FEATURE:
 
 Product CRUD (Create, Read, Update, Delete)
+```bash
+# Table structure
+product {
+    id int serial primary key
+    store_id integer <-- please not add foreign key to this. just keep normal fix integer 
+    name varchar(100)
+    description text
+    amount integer
+    price numeric(12,2)
+}
+```
 
 ## EXAMPLES:
 
