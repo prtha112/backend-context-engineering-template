@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: product-service-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - product-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d product_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product-service-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_NAME=product-service
+      - APP_ENV=production
+      - HTTP_ADDR=0.0.0.0
+      - HTTP_PORT=8080
+      - DB_DRIVER=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=app_user
+      - DB_PASSWORD=app_password
+      - DB_NAME=product_db
+      - DB_SSLMODE=disable
+      - LOG_LEVEL=info
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - product-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  product-network:
+    driver: bridge
