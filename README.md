@@ -8,6 +8,12 @@ This template provides a production-ready foundation for Go backend services fol
 
 **Current Status**: ✅ **Fully Implemented** - Complete Product CRUD API with PostgreSQL persistence, Docker deployment, and comprehensive test coverage.
 
+## How to run cluade code with context engineering templates.
+```bash
+/generate-prp.md {inital file.md}
+/execute-prp.md {inital file.md}
+```
+
 ## 🏗️ Architecture
 
 This project follows **Clean Architecture** with these layers:
